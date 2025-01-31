@@ -59,27 +59,34 @@ app.post('/api/users/:_id/exercises', (req, res) => {
     // 返回数据
     res.json({ username, description, duration, date: formattedDate, _id });
 });
-//从/api/users/:_id/logs可以GET到完整的用户的训练记录
+
+// 从/api/users/:_id/logs可以GET到完整的用户的训练记录
 app.get('/api/users/:_id/logs', (req, res) => {
     const { _id } = req.params;
     const { username } = users[_id];
-    const log = logs[_id] || [];
+    let log = logs[_id] || []; // 允许重新赋值
+
+    // 获取查询参数
     const { from, to, limit } = req.query;
+
+    // 日期过滤
     if (from) {
         log = log.filter((exercise) => new Date(exercise.date) >= new Date(from));
     }
     if (to) {
         log = log.filter((exercise) => new Date(exercise.date) <= new Date(to));
     }
+
+    // 限制日志数量
     if (limit) {
         log = log.slice(0, limit);
     }
+
+    // 返回数据
     res.json({ username, count: log.length, _id, log });
 });
 
 const listener = app.listen(process.env.PORT || 3000, () => {
     console.log('Your app is listening on port ' + listener.address().port);
 });
-
-//{"username":"rzz","count":1,"_id":"h7Nq9H24m","log":[{"description":"33","duration":"44","date":"2025-01-05T00:00:00.000Z"}]}
 

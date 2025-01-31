@@ -63,8 +63,11 @@ app.post('/api/users/:_id/exercises', (req, res) => {
     logs[_id].push(exercises);
 
     // 返回用户对象和新加的锻炼记录
-    res.json({ username, exercise: exercises, _id });
+    res.json({ username, description, duration: durationNum, date: formattedDate, _id });
 });
+
+//这是目前得到的结果:{"username":"fcc_test","description":"test","duration":60,"date":"Mon Jan 01 1990","_id":"wbPPDbk5d"}
+// 这是从测试网站得到的结果: {"_id":"679c5b0137461200132761a3","username":"fcc_test","date":"Mon Jan 01 1990","duration":60,"description":"test"}
 
 // 从/api/users/:_id/logs可以GET到完整的用户的训练记录
 app.get('/api/users/:_id/logs', (req, res) => {
@@ -74,6 +77,7 @@ app.get('/api/users/:_id/logs', (req, res) => {
 
     // 获取查询参数
     const { from, to, limit } = req.query;
+    // 确认查询参数是否正确
 
     // 日期过滤
     if (from) {

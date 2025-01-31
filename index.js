@@ -39,27 +39,12 @@ app.post('/api/users/:_id/exercises', (req, res) => {
     if (!users[_id]) {
         return res.status(404).json({ error: 'User not found' });
     }
-    // 然后判断duration是否为数字,如果不是就报错
-    if (isNaN(duration)) {
-        return res.status(400).json({ error: 'Duration must be a number' });
-    }
-    // 验证 date 是否是有效日期
-    let formattedDate;
-    if (date) {
-        const parsedDate = new Date(date);
-        if (isNaN(parsedDate.getTime())) {
-            return res.status(400).json({ error: 'Invalid date format' });
-        }
-        formattedDate = parsedDate.toISOString();
-    } else {
-        // 如果没有提供日期，则使用当前日期
-        formattedDate = new Date().toISOString();
-    }
 
     // 获取用户名
     const username = users[_id].username;
 
     // 判断并格式化日期
+    const formattedDate = date ? new Date(date).toISOString() : new Date().toISOString();
     console.log(formattedDate); // 打印格式化后的日期
 
     // 添加用户的锻炼记录

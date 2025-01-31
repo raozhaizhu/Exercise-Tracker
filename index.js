@@ -63,7 +63,7 @@ app.post('/api/users/:_id/exercises', (req, res) => {
     logs[_id].push(exercises);
 
     // 返回用户对象和新加的锻炼记录
-    res.json({ username, _id, exercise: exercises });
+    res.json({ username, exercise: exercises, _id });
 });
 
 // 从/api/users/:_id/logs可以GET到完整的用户的训练记录

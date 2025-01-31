@@ -43,12 +43,18 @@ app.post('/api/users/:_id/exercises', (req, res) => {
     // 获取用户名
     const username = users[_id].username;
 
+    // 确保duration是数字
+    const durationNum = Number(duration);
+    if (isNaN(durationNum)) {
+        return res.status(400).json({ error: 'Duration should be a number' });
+    }
+
     // 判断并格式化日期
-    const formattedDate = date ? new Date(date).toISOString() : new Date().toISOString();
+    const formattedDate = date ? new Date(date).toDateString() : new Date().toDateString();
     console.log(formattedDate); // 打印格式化后的日期
 
     // 添加用户的锻炼记录
-    const exercises = { description, duration, date: formattedDate };
+    const exercises = { description, duration: durationNum, date: formattedDate };
 
     // 确保 logs[_id] 数组存在
     if (!logs[_id]) {
@@ -56,8 +62,8 @@ app.post('/api/users/:_id/exercises', (req, res) => {
     }
     logs[_id].push(exercises);
 
-    // 返回数据
-    res.json({ username, description, duration, date: formattedDate, _id });
+    // 返回用户对象和新加的锻炼记录
+    res.json({ username, _id, exercise: exercises });
 });
 
 // 从/api/users/:_id/logs可以GET到完整的用户的训练记录
@@ -81,6 +87,13 @@ app.get('/api/users/:_id/logs', (req, res) => {
     if (limit) {
         log = log.slice(0, limit);
     }
+
+    // 确保日志的duration是数字，date是字符串（Date.toDateString格式）
+    log = log.map((exercise) => ({
+        ...exercise,
+        duration: Number(exercise.duration), // 确保duration是数字
+        date: new Date(exercise.date).toDateString(), // 确保date是字符串格式
+    }));
 
     // 返回数据
     res.json({ username, count: log.length, _id, log });
